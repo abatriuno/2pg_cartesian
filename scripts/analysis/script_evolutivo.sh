@@ -22,10 +22,10 @@ arq_config="configuracao.conf"
 arquivos="$local"arquivos/	 #pasta que contém os FASTA, .pdb e .mdp
 
 #IMPORTANTE: Os path SEMPRE terminam com /
-path_protpred_pop_ini="/home/faccioli/workspace/2pg_build_conformation/"
-path_protpred="/home/faccioli/Programs/2pg_cartesian/"
-path_gromacs="/home/faccioli/Programs/gmx-4.6.5/no_mpi/bin/"
-path_maxcluster="/home/faccioli/workspace/2pg_cartesian/scripts/analysis/maxcluster/"
+path_protpred_pop_ini="/home/alexandre/mestrado/programs/2pg_cartesian/2pg_build_conformation/"
+path_protpred="/home/alexandre/mestrado/programs/2pg_cartesian/"
+path_gromacs="/home/alexandre/mestrado/programs/gmx-4.6.5/no_mpi/bin/"
+path_maxcluster="/home/alexandre/mestrado/programs/2pg_cartesian/scripts/analysis/maxcluster/"
 
 export GMX_MAXBACKUP=-1 # nao criar arquivos de backup do gromacs
 
@@ -214,7 +214,6 @@ while [ $pred_atual -le $total_predicoes ]; do
 				"$path_protpred""bin/"./protpred-Gromacs-Mono $arq_config
 			fi
 
-
 			if [ "$algoritmo" == "NSGA-II" ]; then				
 					"$path_protpred""bin/"./protpred-Gromacs-NSGA2 $arq_config				
 			fi
@@ -222,6 +221,9 @@ while [ $pred_atual -le $total_predicoes ]; do
 			if [ "$algoritmo" == "MonteCarlo" ]; then				
 					"$path_protpred""bin/"./protpred-Gromacs-MC_Metropolis $arq_config				
 			fi
+			if [ "$algoritmo" == "MC_Dominance" ]; then				
+					"$path_protpred""bin/"./protpred-Gromacs-MC_Dominance $arq_config				
+			fi			
 		fi
 
 
