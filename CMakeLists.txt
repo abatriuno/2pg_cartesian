@@ -25,6 +25,7 @@ set_source_files_properties(src/protpred-Gromacs-NSGA2.c  PROPERTIES LANGUAGE CX
 set_source_files_properties(src/protpred-Gromacs-Dominance.c  PROPERTIES LANGUAGE CXX )
 set_source_files_properties(src/protpred-Gromacs-Sort_Method_by_Front_Dominance.c  PROPERTIES LANGUAGE CXX )
 set_source_files_properties(src/protpred-Gromacs-MC_Metropolis.c  PROPERTIES LANGUAGE CXX )
+set_source_files_properties(src/protpred-Gromacs-MC_Dominance.c  PROPERTIES LANGUAGE CXX )
 set_source_files_properties(src/protpred-Gromacs-Mono.c  PROPERTIES LANGUAGE CXX )
 set_source_files_properties(src/protpred-Gromacs-Random_Algorithm.c  PROPERTIES LANGUAGE CXX )
 set_source_files_properties(src/protpred-Gromacs-Sort_Method_Files_by_Front_Dominance.c  PROPERTIES LANGUAGE CXX )
@@ -57,6 +58,7 @@ set_source_files_properties(src/ea_nsga2.c  PROPERTIES LANGUAGE CXX )
 set_source_files_properties(src/dominance.c PROPERTIES LANGUAGE CXX )
 set_source_files_properties(src/owner_file_analysis.c PROPERTIES LANGUAGE CXX )
 set_source_files_properties(src/mc_metropolis.c PROPERTIES LANGUAGE CXX )
+set_source_files_properties(src/mc_dominance.c PROPERTIES LANGUAGE CXX )
 set_source_files_properties(src/random_algorithm.c PROPERTIES LANGUAGE CXX )
 set_source_files_properties(src/diehdral.c PROPERTIES LANGUAGE CXX )
 set_source_files_properties(src/protpred-Gromacs-Front.c PROPERTIES LANGUAGE CXX )
@@ -104,6 +106,7 @@ src/ea_nsga2.c
 src/dominance.c
 src/owner_file_analysis.c
 src/mc_metropolis.c
+src/mc_dominance.c
 src/random_algorithm.c
 src/diehdral.c
 src/maphash.c
@@ -124,6 +127,9 @@ target_link_libraries(protpred-Gromacs-Sort_Method_by_Front_Dominance 2PG_lib)
 
 add_executable(protpred-Gromacs-MC_Metropolis src/protpred-Gromacs-MC_Metropolis.c)
 target_link_libraries(protpred-Gromacs-MC_Metropolis 2PG_lib)
+
+add_executable(protpred-Gromacs-MC_Dominance src/protpred-Gromacs-MC_Dominance.c)
+target_link_libraries(protpred-Gromacs-MC_Dominance 2PG_lib)
 
 add_executable(protpred-Gromacs-Mono src/protpred-Gromacs-Mono.c)
 target_link_libraries(protpred-Gromacs-Mono 2PG_lib)
@@ -160,6 +166,7 @@ install(TARGETS protpred-Gromacs-NSGA2 DESTINATION bin)
 install(TARGETS protpred-Gromacs-Dominance DESTINATION bin)
 install(TARGETS protpred-Gromacs-Front DESTINATION bin)
 install(TARGETS protpred-Gromacs-MC_Metropolis DESTINATION bin)
+install(TARGETS protpred-Gromacs-MC_Dominance DESTINATION bin)
 install(TARGETS protpred-Gromacs-Mono DESTINATION bin)
 install(TARGETS protpred-Gromacs-Random_Algorithm DESTINATION bin)
 install(TARGETS protpred-Gromacs-Sort_Method_Files_by_Front_Dominance DESTINATION bin)
