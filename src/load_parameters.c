@@ -193,7 +193,7 @@ void deAllocateload_parameters(input_parameters_t *param){
 		free(param->script_g_energy);
 	}
 
-	free(param);
+	// free(param);
 }
 
 void load_parameters_from_file(input_parameters_t *param,
