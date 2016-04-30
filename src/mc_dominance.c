@@ -37,7 +37,7 @@ void save_values_to_analysis(const double *obj1_after, const double *obj2_after,
     FILE * energy_file; 
     char *file_name;
     file_name = Malloc(char, MAX_FILE_NAME);
-    strcpy(file_name, "monte_carlo_dominance.fit");
+    strcpy(file_name, "monte_carlo_dominance_objectives.fit");
     char *fname = path_join_file(in_para->path_local_execute, file_name);        
     if (*num_sol == 1){
         energy_file = open_file(fname, fWRITE);
