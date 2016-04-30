@@ -26,31 +26,27 @@
 #include "randomlib.h"
 #include "objective.h"
 #include "solutionio.h"
-
-
-
 #include "dominance.h"
 
 
-
-void save_values_to_analysis(const float *energy_after_mc_criteria,
-    const float *energy_new_solution, const float *ener_before_mc_crit, 
-    const float *prob, const float *rr, 
-    const input_parameters_t *in_para, const int *num_sol){    
+void save_values_to_analysis(const double *obj1_after, const double *obj2_after,
+    const double *obj1_before, const double *obj2_before, const double *obj1_new, 
+    const double *obj2_new, char *dominance_status, const input_parameters_t *in_para, 
+    const int *num_sol){    
     
     FILE * energy_file; 
     char *file_name;
     file_name = Malloc(char, MAX_FILE_NAME);
-    strcpy(file_name, "monte_carlo_energies.fit");
+    strcpy(file_name, "monte_carlo_dominance.fit");
     char *fname = path_join_file(in_para->path_local_execute, file_name);        
     if (*num_sol == 1){
         energy_file = open_file(fname, fWRITE);
-        fprintf (energy_file,"#Index\tEnergy_After_Criteria\tEnergy_Before_Criteria\tNew_Solution\tProb\trr\n");
+        fprintf (energy_file,"#Index\t\tEnergy_After_Criteria\t\t\t\tEnergy_Before_Criteria\t\t\t\t\tNew_Solution\t\tDominou_solucao\n");
     }else{
         energy_file = open_file(fname, fAPPEND);
-    }    
-    fprintf (energy_file,"%i\t%.10e\t%.10e\t%.10e\t%f\t%f\n", *num_sol, *energy_after_mc_criteria, 
-        *ener_before_mc_crit, *energy_new_solution, *prob, *rr);
+    }  
+    fprintf (energy_file,"%i\t%.10e\t%.10e\t%.10e\t%.10e\t%.10e\t%.10e\t%s\n", *num_sol, *obj1_after, *obj2_after,
+        *obj1_before, *obj2_before, *obj1_new, *obj2_new, dominance_status); 
     fclose(energy_file);    
     free(fname);
     free(file_name);    
@@ -85,13 +81,14 @@ void save_solution(const solution_t *solution_curr,
 * solution_curr is the current solution
 * solution_new is the new solution
 */ 
-void accept(solution_t *solution_curr, const solution_t *solution_new){
+void accept(solution_t *solution_curr, solution_t *solution_new){
 	protein_t *p_curr;
 	const protein_t *p_new;
 	p_curr = (protein_t*) solution_curr[0].representation;
 	p_new = (protein_t*) solution_new[0].representation;
 	copy_protein(p_curr, p_new);
 	solution_curr->obj_values[0] = solution_new->obj_values[0];
+    solution_curr->obj_values[1] = solution_new->obj_values[1];
 }
 
 /** Updates new solution with current solution
@@ -199,6 +196,8 @@ int mc_dominance(const input_parameters_t *in_para){
     int num_solution; // stores the number of solution    
     int num_solution_dominance; // number of solutions to verify dominance
     int model;
+    char *dominance_status;
+    double obj1_before, obj2_before, obj1_after, obj2_after, obj1_new, obj2_new;
 
     primary_seq_t *primary_sequence; // Primary Sequence of Protein
     
@@ -270,21 +269,54 @@ int mc_dominance(const input_parameters_t *in_para){
         solutions[0] = solution_curr[0];
         solutions[1] = solution_new[0];
 
+        obj1_before = solution_curr[0].obj_values[0];
+        obj2_before = solution_curr[0].obj_values[1];
+        obj1_new = solution_new[0].obj_values[0];
+        obj2_new = solution_new[0].obj_values[1];
+
         // Verifying dominance
         set_dominance(dominance,solutions,&num_solution_dominance);
         
-        printf("Step: %d\n\n",s);
+        // printf("-----------------\n");
+        // printf("Step: %d\n\n",s);
 
-        printf("[antes] solucao corrente[0]: %f\n",dominance[0].sol->obj_values[0]);
-        printf("[antes] solucao nova[1]: %f\n\n",dominance[1].sol->obj_values[0]);   
+
+        // printf("[Potential/Solvatation] solucao corrente[0]: %f / %f\n",dominance[0].sol->obj_values[0],dominance[0].sol->obj_values[1]);
+        // printf("[Potential/Solvatation] solucao nova[1]: %f / %f\n",dominance[1].sol->obj_values[0],dominance[1].sol->obj_values[1]);
+
+
+        // printf("corrente[0] - how_many_solutions_dominate_it: %d\n", dominance[0].how_many_solutions_dominate_it );
+        // printf("nova[1] - how_many_solutions_dominate_it: %d\n\n",dominance[1].how_many_solutions_dominate_it);   
 
         // If solution_new dominates solution_curr
-		if( dominance[0].set_dominated[0] == 0 ){
-            printf("[depois] solucao corrente[0]: %f\n",dominance[0].sol->obj_values[0]);
-            printf("[depois] solucao nova[1]: %f\n",dominance[1].sol->obj_values[0]);  
+		if( dominance[1].how_many_solutions_dominate_it == 0 && dominance[0].how_many_solutions_dominate_it == 1 ){
 
-    		accept(&solution_curr[0],&solution_new[0]);
-		}
+            accept(&solution_curr[0],&solution_new[0]);
+
+            obj1_after = solution_new[0].obj_values[0];
+            obj2_after = solution_new[0].obj_values[1];     
+            dominance_status = (char *)"YES";          
+ 
+            save_values_to_analysis(&obj1_after, &obj2_after, &obj1_before, &obj2_before, &obj1_new,
+                 &obj2_new, dominance_status, in_para, &s);
+
+		} else if (dominance[1].how_many_solutions_dominate_it == 1 && dominance[0].how_many_solutions_dominate_it == 0) {
+
+            obj1_after = solution_curr[0].obj_values[0];
+            obj2_after = solution_curr[0].obj_values[1];
+            dominance_status = (char *)"NO";             
+            
+            save_values_to_analysis(&obj1_after, &obj2_after, &obj1_before, &obj2_before, &obj1_new,
+                 &obj2_new, dominance_status, in_para, &s);          
+        } else {
+
+            obj1_after = 0;
+            obj2_after = 0;
+            dominance_status = (char *)"--";
+
+            save_values_to_analysis(&obj1_after, &obj2_after, &obj1_before, &obj2_before, &obj1_new,
+                 &obj2_new, dominance_status, in_para, &s);             
+        }
 
         //Saving PDB of current solution
         if (s % in_para->freq_mc == 0){
