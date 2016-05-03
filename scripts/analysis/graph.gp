@@ -3,7 +3,7 @@ set term postscript color enhanced eps
 set output 'grafico1.eps'
 set datafile separator "\t"
 set key box
-set key left top Left
+set key right
 set autoscale
 set ylabel "Potential" offset -2,0
 set xlabel "GBSA Solvatation" offset 0,-1.5

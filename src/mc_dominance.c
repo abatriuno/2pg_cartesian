@@ -291,11 +291,10 @@ int mc_dominance(const input_parameters_t *in_para){
         // If solution_new dominates solution_curr
 		if( dominance[1].how_many_solutions_dominate_it == 0 && dominance[0].how_many_solutions_dominate_it == 1 ){
 
-            accept(&solution_curr[0],&solution_new[0]);
-
             obj1_after = solution_new[0].obj_values[0];
             obj2_after = solution_new[0].obj_values[1];     
-            dominance_status = (char *)"YES";          
+            dominance_status = (char *)"YES";  
+            accept(&solution_curr[0],&solution_new[0]);        
  
             save_values_to_analysis(&obj1_after, &obj2_after, &obj1_before, &obj2_before, &obj1_new,
                  &obj2_new, dominance_status, in_para, &s);
