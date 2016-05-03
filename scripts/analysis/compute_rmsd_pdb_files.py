@@ -9,9 +9,8 @@ import os
 import sys
 from collections import OrderedDict
 
-native = "1VII.pdb"
-path_gromacs ="/home/faccioli/Programs/gmx-4.6.5/no_mpi/bin/"
-
+native = "./1VII_MC_temp_309_1/1VII.pdb"
+path_gromacs ="/home/alexandre/mestrado/programs/gmx-4.6.5/no_mpi/bin/"
 
 main_command = "echo C-alpha C-alpha | @PATH_GROMACS@./g_rms -f @PROT@ -s @NATIVE@ -o temporary_rmsd.xvg 2>/dev/null"
 
@@ -33,8 +32,10 @@ def main():
 
 	dict_rmsd = {}
 	all_pdbs = get_PROT_IND_files_pdb(pdb_path)
+
 	for pdb in all_pdbs:
 		aux_command = main_command.replace("@PATH_GROMACS@", path_gromacs).replace("@PROT@",pdb).replace("@NATIVE@", native)
+		print aux_command
 		os.system(aux_command)
 		temp_rmsd = open("temporary_rmsd.xvg", "r")
 		for line in temp_rmsd.readlines():
